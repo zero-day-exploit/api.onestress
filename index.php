@@ -1,15 +1,12 @@
 <?php
-// Initialize visit counter
+// Initialize and update visit counter
 session_start();
 if (!isset($_SESSION['visits'])) {
     $_SESSION['visits'] = 0;
 }
 $_SESSION['visits']++;
-
-// Save visit count to a file
-$file = 'visits.txt';
 $visits = $_SESSION['visits'];
-file_put_contents($file, $visits);
+file_put_contents('visits.txt', $visits);
 ?>
 
 <!DOCTYPE html>
@@ -17,8 +14,9 @@ file_put_contents($file, $visits);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Visit Counter</title>
+    <title>Visit Counter</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <style>
         body {
             background: #000;
@@ -35,6 +33,10 @@ file_put_contents($file, $visits);
         #counter {
             font-size: 3em;
             margin-bottom: 20px;
+            text-align: center;
+        }
+        #count {
+            color: #00ffcc;
         }
         canvas {
             max-width: 600px;
@@ -52,11 +54,10 @@ file_put_contents($file, $visits);
             z-index: -1;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 </head>
 <body>
     <div id="particles-js"></div>
-    <div id="counter">Visits: <span id="count">0</span></div>
+    <div id="counter">Total Visits: <span id="count">0</span></div>
     <canvas id="visitChart"></canvas>
 
     <script>
@@ -82,8 +83,8 @@ file_put_contents($file, $visits);
             data: {
                 labels: Array.from({length: 10}, (_, i) => `Visit ${i+1}`),
                 datasets: [{
-                    label: 'Visits Over Time',
-                    data: Array.from({length: 10}, () => Math.floor(Math.random() * 100)),
+                    label: 'Visits',
+                    data: [<?php echo $visits; ?>].concat(Array(9).fill(0)),
                     borderColor: '#00ffcc',
                     backgroundColor: 'rgba(0, 255, 204, 0.2)',
                     fill: true,
